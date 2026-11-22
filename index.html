@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100d1c">
+<title>Catatanku</title>
+<style>
+:root{--bg:#100d1c;--panel:#191528;--panel2:#211c35;--line:#332b4b;--text:#f3efff;--muted:#a69bbd;--accent:#a78bfa;--accent2:#7c3aed;--danger:#fb7185}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#251b3d 0%,var(--bg) 48%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+.wrap{max-width:900px;margin:auto;padding:22px 16px 60px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:26px}.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border-radius:15px;background:linear-gradient(135deg,#a78bfa,#6d28d9);display:grid;place-items:center;font-size:22px;box-shadow:0 8px 24px #7c3aed44}.brand h1{font-size:22px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.status{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}.dot{width:8px;height:8px;border-radius:50%;background:#fbbf24}.dot.ok{background:#34d399}.dot.err{background:#fb7185}
+.hero{margin-bottom:18px}.hero h2{margin:0 0 6px;font-size:24px}.hero p{margin:0;color:var(--muted);font-size:14px}
+.controls{display:flex;gap:10px;margin:20px 0}.search{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:14px;color:var(--text);padding:13px 14px;font-size:15px;outline:none}.search:focus{border-color:var(--accent)}button{border:0;cursor:pointer;font:inherit}.add{background:linear-gradient(135deg,#a78bfa,#7c3aed);color:white;font-weight:650;border-radius:14px;padding:0 18px;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:13px}.note{background:linear-gradient(150deg,#211b34,#191528);border:1px solid var(--line);border-radius:18px;padding:16px;min-height:155px;display:flex;flex-direction:column;box-shadow:0 8px 25px #00000016}.note h3{margin:0 0 8px;font-size:16px;overflow-wrap:anywhere}.note .body{color:#d0c8e2;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font-size:14px;flex:1;max-height:190px;overflow:auto}.meta{color:var(--muted);font-size:11px;margin-top:12px}.actions{display:flex;gap:7px;margin-top:12px}.action{background:#302744;color:#d9cef5;border:1px solid #42365c;padding:7px 10px;border-radius:10px;font-size:12px}.action:hover{background:#403258}.action.delete{color:#fda4af}.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:44px 15px;background:var(--panel);border:1px dashed var(--line);border-radius:18px}
+.modal{position:fixed;inset:0;background:#07050bcc;display:none;align-items:center;justify-content:center;padding:16px;z-index:10}.modal.show{display:flex}.dialog{width:min(520px,100%);background:#1b162b;border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 20px 60px #0008}.dialog h2{margin:0 0 15px}.field{display:block;margin:12px 0}.field span{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}.field input,.field textarea{width:100%;background:#110e1c;border:1px solid var(--line);border-radius:12px;padding:12px;color:var(--text);font:inherit;outline:none}.field textarea{min-height:150px;resize:vertical}.dialog-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:15px}.cancel{background:#302744;color:var(--text);padding:11px 15px;border-radius:12px}.save{background:var(--accent2);color:white;padding:11px 18px;border-radius:12px;font-weight:650}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2a2340;border:1px solid var(--line);padding:11px 15px;border-radius:12px;color:var(--text);display:none;z-index:20;max-width:90%;font-size:13px}.toast.show{display:block}
+footer{color:#786d91;font-size:11px;text-align:center;margin-top:24px}
+@media(max-width:500px){.wrap{padding:17px 13px 45px}.brand h1{font-size:20px}.status{font-size:10px}.controls{gap:8px}.add{padding:0 14px}.hero h2{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+ <div class="brand"><div class="logo">✦</div><div><h1>Catatanku</h1><p>Ruang kecil untuk menyimpan pikiran</p></div></div>
+ <div class="status"><span id="dot" class="dot"></span><span id="status">Menghubungkan...</span></div>
+</header>
+<section class="hero"><h2>Catatan kamu</h2><p>Catatan tersimpan online dan bisa dibuka dari perangkat lain.</p></section>
+<div class="controls"><input id="search" class="search" placeholder="Cari catatan..." autocomplete="off"><button class="add" id="addBtn">＋ Catatan</button></div>
+<section id="notes" class="grid"><div class="empty">Memuat catatan...</div></section>
+<footer>Catatan disimpan di cloud Supabase • Hindari menyimpan informasi rahasia.</footer>
+</div>
+<div id="modal" class="modal"><div class="dialog">
+<h2 id="modalTitle">Catatan baru</h2>
+<label class="field"><span>Judul</span><input id="title" maxlength="180" placeholder="Judul catatan"></label>
+<label class="field"><span>Isi catatan</span><textarea id="content" placeholder="Tulis sesuatu..."></textarea></label>
+<div class="dialog-actions"><button class="cancel" id="cancel">Batal</button><button class="save" id="save">Simpan</button></div>
+</div></div>
+<div id="toast" class="toast"></div>
+<script>
+const SUPABASE_URL = "https://dpjsvvtlkwlkootzwfcp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_VsqzHiUYqGd1aKIKv2nvVA_FhqCpDwX";
+const endpoint = SUPABASE_URL + "/rest/v1/catatan";
+const headers = {"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"};
+let allNotes=[], editingId=null;
+const $=id=>document.getElementById(id);
+function setStatus(s,type=""){ $("status").textContent=s; $("dot").className="dot "+type; }
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2300);}
+async function request(url,opts={}){const r=await fetch(url,{...opts,headers:{...headers,...(opts.headers||{})}});if(!r.ok){let msg=await r.text();throw new Error(msg||"Request gagal ("+r.status+")");}if(r.status===204)return null;return r.json();}
+async function loadNotes(){try{setStatus("Menyinkronkan...");allNotes=await request(endpoint+"?select=*&order=created_at.desc");setStatus("Tersinkron","ok");render();}catch(e){setStatus("Gagal tersambung","err");$("notes").innerHTML='<div class="empty">Gagal memuat catatan.<br><small>'+escapeHtml(e.message)+'</small></div>';}}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function render(){const q=$("search").value.toLowerCase().trim();const list=allNotes.filter(n=>(n.judul+" "+n.isi).toLowerCase().includes(q));if(!list.length){$("notes").innerHTML='<div class="empty">'+(q?'Tidak ada catatan yang cocok.':'Belum ada catatan. Tekan ＋ Catatan untuk mulai.')+'</div>';return;}
+$("notes").innerHTML=list.map(n=>`<article class="note"><h3>${escapeHtml(n.judul||"Tanpa judul")}</h3><div class="body">${escapeHtml(n.isi||"")}</div><div class="meta">${new Date(n.created_at).toLocaleString("id-ID",{dateStyle:"medium",timeStyle:"short"})}</div><div class="actions"><button class="action" data-copy="${n.id}">Salin</button><button class="action" data-edit="${n.id}">Edit</button><button class="action delete" data-delete="${n.id}">Hapus</button></div></article>`).join("");}
+function openModal(n=null){editingId=n?.id??null;$("modalTitle").textContent=n?"Edit catatan":"Catatan baru";$("title").value=n?.judul??"";$("content").value=n?.isi??"";$("modal").classList.add("show");$("title").focus();}
+function closeModal(){$("modal").classList.remove("show");}
+$("addBtn").onclick=()=>openModal();$("cancel").onclick=closeModal;$("modal").onclick=e=>{if(e.target===$("modal"))closeModal();};$("search").oninput=render;
+$("save").onclick=async()=>{const judul=$("title").value.trim(),isi=$("content").value.trim();if(!judul&&!isi){toast("Isi judul atau catatan dulu.");return;}const b=$("save");b.disabled=true;b.textContent="Menyimpan...";try{if(editingId){await request(endpoint+"?id=eq."+encodeURIComponent(editingId),{method:"PATCH",body:JSON.stringify({judul,isi})});}else{await request(endpoint,{method:"POST",body:JSON.stringify({judul,isi}),headers:{"Prefer":"return=representation"}});}closeModal();await loadNotes();toast("Catatan tersimpan!");}catch(e){toast("Gagal menyimpan: "+e.message);}finally{b.disabled=false;b.textContent="Simpan";}};
+$("notes").onclick=async e=>{const copy=e.target.closest("[data-copy]");const edit=e.target.closest("[data-edit]");const del=e.target.closest("[data-delete]");if(copy){const n=allNotes.find(x=>String(x.id)===copy.dataset.copy);if(n){try{await navigator.clipboard.writeText((n.judul? n.judul+"\n":"")+n.isi);toast("Disalin!");}catch{toast("Clipboard tidak tersedia.");}}}
+if(edit){const n=allNotes.find(x=>String(x.id)===edit.dataset.edit);if(n)openModal(n);}
+if(del){const n=allNotes.find(x=>String(x.id)===del.dataset.delete);if(n&&confirm("Hapus catatan “"+(n.judul||"Tanpa judul")+"”?")){try{await request(endpoint+"?id=eq."+encodeURIComponent(n.id),{method:"DELETE"});await loadNotes();toast("Catatan dihapus.");}catch(err){toast("Gagal menghapus: "+err.message);}}}};
+loadNotes();
+</script>
+</body>
+</html>
